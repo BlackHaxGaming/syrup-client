@@ -3,9 +3,9 @@ package net.minecraft.block;
 import java.util.List;
 import java.util.Random;
 
-import me.wavelength.baseclient.BaseClient;
-import me.wavelength.baseclient.event.events.BlockBrightnessRequestEvent;
-import me.wavelength.baseclient.event.events.CollideEvent;
+import us.syrup.Syrup;
+import us.syrup.event.events.BlockBrightnessRequestEvent;
+import us.syrup.event.events.CollideEvent;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -392,7 +392,7 @@ public class Block {
 
 	/** Here the BlockBrightnessRequestEvent gets fired */
 	public int getMixedBrightnessForBlock(IBlockAccess worldIn, BlockPos pos) {
-		BlockBrightnessRequestEvent event = (BlockBrightnessRequestEvent) BaseClient.instance.getEventManager().call(new BlockBrightnessRequestEvent(this));
+		BlockBrightnessRequestEvent event = (BlockBrightnessRequestEvent) Syrup.instance.getEventManager().call(new BlockBrightnessRequestEvent(this));
 		int blockBrightness = event.getBlockBrightness();
 		if (blockBrightness != -1) /** This -1 check is done so it's possible to cancel the event (for whatever reason) and keep the minecraft brightness for that block anyway */
 			return (blockBrightness > 15 ? blockBrightness : worldIn.getCombinedLight(pos, blockBrightness));
@@ -416,7 +416,7 @@ public class Block {
 	}
 
 //	public boolean shouldCancelRenderEvent(IBlockAccess worldIn, BlockPos pos, EnumFacing side) {
-//		BlockSideRenderEvent event = (BlockSideRenderEvent) BaseClient.instance.getEventManager().call(new BlockSideRenderEvent(this));
+//		BlockSideRenderEvent event = (BlockSideRenderEvent) Syrup.instance.getEventManager().call(new BlockSideRenderEvent(this));
 //
 //		if (event.isCancelled())
 //			return !event.shouldRender();
@@ -443,7 +443,7 @@ public class Block {
 	public void addCollisionBoxesToList(World worldIn, BlockPos pos, IBlockState state, AxisAlignedBB mask, List<AxisAlignedBB> list, Entity collidingEntity) {
 		AxisAlignedBB axisalignedbb = this.getCollisionBoundingBox(worldIn, pos, state);
 
-		CollideEvent event = (CollideEvent) BaseClient.instance.getEventManager().call(new CollideEvent(collidingEntity, axisalignedbb, this));
+		CollideEvent event = (CollideEvent) Syrup.instance.getEventManager().call(new CollideEvent(collidingEntity, axisalignedbb, this));
 
 		if (event.isCancelled())
 			return;

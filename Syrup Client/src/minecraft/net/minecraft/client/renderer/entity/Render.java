@@ -2,8 +2,8 @@ package net.minecraft.client.renderer.entity;
 
 import org.lwjgl.opengl.GL11;
 
-import me.wavelength.baseclient.BaseClient;
-import me.wavelength.baseclient.event.events.RenderLivingLabelEvent;
+import us.syrup.Syrup;
+import us.syrup.event.events.RenderLivingLabelEvent;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -298,7 +298,7 @@ public abstract class Render<T extends Entity> {
 	 * Renders an entity's name above its head
 	 */
 	protected void renderLivingLabel(T entityIn, String str, double x, double y, double z, int maxDistance) {
-		RenderLivingLabelEvent event = (RenderLivingLabelEvent) BaseClient.instance.getEventManager().call(new RenderLivingLabelEvent(entityIn, str));
+		RenderLivingLabelEvent event = (RenderLivingLabelEvent) Syrup.instance.getEventManager().call(new RenderLivingLabelEvent(entityIn, str));
 
 		if (event.isCancelled())
 			return;

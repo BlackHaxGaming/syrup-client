@@ -11,8 +11,8 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Maps;
 
-import me.wavelength.baseclient.BaseClient;
-import me.wavelength.baseclient.event.events.LadderClimbEvent;
+import us.syrup.Syrup;
+import us.syrup.event.events.LadderClimbEvent;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -1383,7 +1383,7 @@ public abstract class EntityLivingBase extends Entity {
 					this.moveEntity(this.motionX, this.motionY, this.motionZ);
 
 					if (this.isCollidedHorizontally && this.isOnLadder()) {
-						LadderClimbEvent event = (LadderClimbEvent) BaseClient.instance.getEventManager().call(new LadderClimbEvent(0.2D));
+						LadderClimbEvent event = (LadderClimbEvent) Syrup.instance.getEventManager().call(new LadderClimbEvent(0.2D));
 						if (!(event.isCancelled()))
 							this.motionY = event.getMotionY();
 					}

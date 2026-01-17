@@ -12,7 +12,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import me.wavelength.baseclient.BaseClient;
+import us.syrup.Syrup;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.data.IMetadataSerializer;
 import net.minecraft.client.resources.data.LanguageMetadataSection;
@@ -63,7 +63,7 @@ public class LanguageManager implements IResourceManagerReloadListener {
 		currentLocale.loadLocaleDataFiles(resourceManager, list);
 		StringTranslate.replaceWith(currentLocale.properties);
 		
-		BaseClient.instance.getEnglishLocale().loadLocaleDataFiles(Minecraft.getMinecraft().getResourceManager(), Lists.newArrayList(new String[] { "en_US" }));
+		Syrup.instance.getEnglishLocale().loadLocaleDataFiles(Minecraft.getMinecraft().getResourceManager(), Lists.newArrayList(new String[] { "en_US" }));
 	}
 
 	public boolean isCurrentLocaleUnicode() {

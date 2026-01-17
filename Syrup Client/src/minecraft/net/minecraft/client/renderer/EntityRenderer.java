@@ -21,8 +21,8 @@ import org.lwjgl.util.glu.Project;
 import com.google.common.base.Predicates;
 import com.google.gson.JsonSyntaxException;
 
-import me.wavelength.baseclient.BaseClient;
-import me.wavelength.baseclient.event.events.Render3DEvent;
+import us.syrup.Syrup;
+import us.syrup.event.events.Render3DEvent;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.material.Material;
@@ -1437,7 +1437,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
 			Reflector.callVoid(Reflector.ForgeHooksClient_dispatchRenderLast, new Object[] { renderglobal, Float.valueOf(partialTicks) });
 		}
 
-		BaseClient.instance.getEventManager().call(new Render3DEvent(partialTicks));
+		Syrup.instance.getEventManager().call(new Render3DEvent(partialTicks));
 
 		this.mc.mcProfiler.endStartSection("hand");
 		boolean flag3 = Reflector.callBoolean(Reflector.ForgeHooksClient_renderFirstPersonHand, new Object[] { this.mc.renderGlobal, Float.valueOf(partialTicks), Integer.valueOf(pass) });

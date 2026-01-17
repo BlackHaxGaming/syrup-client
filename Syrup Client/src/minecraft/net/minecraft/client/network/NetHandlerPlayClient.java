@@ -18,8 +18,8 @@ import com.google.common.util.concurrent.Futures;
 import com.mojang.authlib.GameProfile;
 
 import io.netty.buffer.Unpooled;
-import me.wavelength.baseclient.BaseClient;
-import me.wavelength.baseclient.event.events.PlayerSpawnEvent;
+import us.syrup.Syrup;
+import us.syrup.event.events.PlayerSpawnEvent;
 import net.minecraft.block.Block;
 import net.minecraft.client.ClientBrandRetriever;
 import net.minecraft.client.Minecraft;
@@ -485,7 +485,7 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient {
 		}
 
 		entityotherplayermp.setPositionAndRotation(d0, d1, d2, f, f1);
-		PlayerSpawnEvent event = (PlayerSpawnEvent) BaseClient.instance.getEventManager().call(new PlayerSpawnEvent(entityotherplayermp));
+		PlayerSpawnEvent event = (PlayerSpawnEvent) Syrup.instance.getEventManager().call(new PlayerSpawnEvent(entityotherplayermp));
 
 		if (event.isCancelled())
 			return;

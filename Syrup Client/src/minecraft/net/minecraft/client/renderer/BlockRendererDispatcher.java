@@ -1,11 +1,10 @@
 package net.minecraft.client.renderer;
 
-import me.wavelength.baseclient.BaseClient;
-import me.wavelength.baseclient.event.events.BlockRenderEvent;
-import me.wavelength.baseclient.event.events.FluidRenderEvent;
+import us.syrup.Syrup;
+import us.syrup.event.events.BlockRenderEvent;
+import us.syrup.event.events.FluidRenderEvent;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourceManagerReloadListener;
@@ -15,7 +14,6 @@ import net.minecraft.client.resources.model.WeightedBakedModel;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
-import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ReportedException;
@@ -59,7 +57,7 @@ public class BlockRendererDispatcher implements IResourceManagerReloadListener {
 			} else {
 				switch (i) {
 				case 1: {
-					FluidRenderEvent fluidRenderEvent = (FluidRenderEvent) BaseClient.instance.getEventManager().call(new FluidRenderEvent(pos, state));
+					FluidRenderEvent fluidRenderEvent = (FluidRenderEvent) Syrup.instance.getEventManager().call(new FluidRenderEvent(pos, state));
 
 					boolean ignoreSides = (!(fluidRenderEvent.isCancelled()) && fluidRenderEvent.shouldForceDraw());
 
@@ -71,7 +69,7 @@ public class BlockRendererDispatcher implements IResourceManagerReloadListener {
 				case 2:
 					return false;
 				case 3: {
-					BlockRenderEvent blockRenderEvent = (BlockRenderEvent) BaseClient.instance.getEventManager().call(new BlockRenderEvent(state.getBlock()));
+					BlockRenderEvent blockRenderEvent = (BlockRenderEvent) Syrup.instance.getEventManager().call(new BlockRenderEvent(state.getBlock()));
 					boolean forceDraw = blockRenderEvent.shouldForceDraw();
 
 					if (blockRenderEvent.isCancelled() && !(forceDraw))

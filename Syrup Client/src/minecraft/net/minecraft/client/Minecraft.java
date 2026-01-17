@@ -60,10 +60,10 @@ import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 
-import me.wavelength.baseclient.BaseClient;
-import me.wavelength.baseclient.event.events.KeyPressedEvent;
-import me.wavelength.baseclient.event.events.MouseClickEvent;
-import me.wavelength.baseclient.event.events.MouseScrollEvent;
+import us.syrup.Syrup;
+import us.syrup.event.events.KeyPressedEvent;
+import us.syrup.event.events.MouseClickEvent;
+import us.syrup.event.events.MouseScrollEvent;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.audio.MusicTicker;
@@ -371,7 +371,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 	/** Profiler currently displayed in the debug screen pie chart */
 	private String debugProfilerName = "root";
 
-	private BaseClient baseClient;
+	private Syrup syrup;
 
 	private List<Integer> buttonsDown;
 
@@ -436,7 +436,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 
 		try {
 			this.startGame();
-			baseClient.afterMinecraft();
+			syrup.afterMinecraft();
 		} catch (Throwable throwable) {
 			CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Initializing game");
 			crashreport.makeCategory("Initialization");
@@ -617,8 +617,8 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 
 	private void createDisplay() throws LWJGLException {
 		Display.setResizable(true);
-		this.baseClient = BaseClient.instance;
-		baseClient.initialize();
+		this.syrup = Syrup.instance;
+		syrup.initialize();
 
 		try {
 			Display.create((new PixelFormat()).withDepthBits(24));
@@ -1538,7 +1538,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 			return;
 
 		buttonsDown.add(button);
-		BaseClient.instance.getEventManager().call(new MouseClickEvent(button));
+		Syrup.instance.getEventManager().call(new MouseClickEvent(button));
 	}
 
 	/**
@@ -1635,7 +1635,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 
 					if (j != 0) {
 						/** Mouse Wheel Scroll Event */
-						if (!(((MouseScrollEvent) BaseClient.instance.getEventManager().call(new MouseScrollEvent(j))).isCancelled())) {
+						if (!(((MouseScrollEvent) Syrup.instance.getEventManager().call(new MouseScrollEvent(j))).isCancelled())) {
 							if (this.thePlayer.isSpectator()) {
 								j = j < 0 ? -1 : 1;
 
@@ -1707,7 +1707,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 					if (this.currentScreen != null) {
 						this.currentScreen.handleKeyboardInput();
 					} else {
-						KeyPressedEvent keyPressEvent = (KeyPressedEvent) baseClient.getEventManager().call(new KeyPressedEvent(k));
+						KeyPressedEvent keyPressEvent = (KeyPressedEvent) syrup.getEventManager().call(new KeyPressedEvent(k));
 
 						if (keyPressEvent.isCancelled())
 							continue;

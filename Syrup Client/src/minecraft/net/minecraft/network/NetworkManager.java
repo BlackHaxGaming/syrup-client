@@ -42,9 +42,9 @@ import io.netty.handler.timeout.TimeoutException;
 import io.netty.util.AttributeKey;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
-import me.wavelength.baseclient.BaseClient;
-import me.wavelength.baseclient.event.events.PacketReceivedEvent;
-import me.wavelength.baseclient.event.events.PacketSentEvent;
+import us.syrup.Syrup;
+import us.syrup.event.events.PacketReceivedEvent;
+import us.syrup.event.events.PacketSentEvent;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.CryptManager;
@@ -140,7 +140,7 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet> {
 	protected void channelRead0(ChannelHandlerContext p_channelRead0_1_, Packet packetIn) throws Exception {
 		if (this.channel.isOpen()) {
 			try {
-				PacketReceivedEvent packetReceivedEvent = (PacketReceivedEvent) BaseClient.instance.getEventManager().call(new PacketReceivedEvent(packetIn));
+				PacketReceivedEvent packetReceivedEvent = (PacketReceivedEvent) Syrup.instance.getEventManager().call(new PacketReceivedEvent(packetIn));
 				if (packetReceivedEvent.isCancelled())
 					return;
 
@@ -165,7 +165,7 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet> {
 
 	public void sendPacket(Packet packetIn) {
 		/** Handles the PacketSentEvent */
-		PacketSentEvent packetSentEvent = (PacketSentEvent) BaseClient.instance.getEventManager().call(new PacketSentEvent(packetIn));
+		PacketSentEvent packetSentEvent = (PacketSentEvent) Syrup.instance.getEventManager().call(new PacketSentEvent(packetIn));
 		if (packetSentEvent.isCancelled())
 			return;
 
@@ -187,7 +187,7 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet> {
 
 	public void sendPacket(Packet packetIn, GenericFutureListener<? extends Future<? super Void>> listener, GenericFutureListener<? extends Future<? super Void>>... listeners) {
 		/** Handles the PacketSentEvent */
-		PacketSentEvent packetSentEvent = (PacketSentEvent) BaseClient.instance.getEventManager().call(new PacketSentEvent(packetIn));
+		PacketSentEvent packetSentEvent = (PacketSentEvent) Syrup.instance.getEventManager().call(new PacketSentEvent(packetIn));
 		if (packetSentEvent.isCancelled())
 			return;
 

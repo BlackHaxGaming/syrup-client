@@ -9,9 +9,9 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
-import me.wavelength.baseclient.BaseClient;
-import me.wavelength.baseclient.event.events.Render2DEvent;
-import me.wavelength.baseclient.utils.RenderUtils;
+import us.syrup.Syrup;
+import us.syrup.event.events.Render2DEvent;
+import us.syrup.utils.RenderUtils;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -148,7 +148,7 @@ public class GuiIngame extends Gui {
 			this.renderTooltip(scaledresolution, partialTicks);
 		}
 
-		BaseClient.instance.getEventManager().call(new Render2DEvent(scaledresolution.getScaledWidth(), scaledresolution.getScaledHeight()));
+		Syrup.instance.getEventManager().call(new Render2DEvent(scaledresolution.getScaledWidth(), scaledresolution.getScaledHeight()));
 
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 		this.mc.getTextureManager().bindTexture(icons);
@@ -320,7 +320,7 @@ public class GuiIngame extends Gui {
 
 	protected void renderTooltip(ScaledResolution sr, float partialTicks) {
 		if (this.mc.getRenderViewEntity() instanceof EntityPlayer) {
-			if (BaseClient.instance.isDefaultHotbar()) {
+			if (Syrup.instance.isDefaultHotbar()) {
 				GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 				this.mc.getTextureManager().bindTexture(widgetsTexPath);
 				EntityPlayer entityplayer = (EntityPlayer) this.mc.getRenderViewEntity();

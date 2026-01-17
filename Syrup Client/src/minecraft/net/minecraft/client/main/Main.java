@@ -16,16 +16,16 @@ import com.mojang.authlib.properties.PropertyMap.Serializer;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
-import me.wavelength.baseclient.BaseClient;
+import us.syrup.Syrup;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Session;
 
 public class Main {
 
-	private static BaseClient baseClient;
+	private static Syrup syrup;
 
 	public static void main(String[] p_main_0_) {
-		baseClient = new BaseClient();
+		syrup = new Syrup();
 		System.setProperty("java.net.preferIPv4Stack", "true");
 		OptionParser optionparser = new OptionParser();
 		optionparser.allowsUnrecognizedOptions();
@@ -41,7 +41,7 @@ public class Main {
 		OptionSpec<Integer> optionspec6 = optionparser.accepts("proxyPort").withRequiredArg().defaultsTo("8080", new String[0]).<Integer>ofType(Integer.class);
 		OptionSpec<String> optionspec7 = optionparser.accepts("proxyUser").withRequiredArg();
 		OptionSpec<String> optionspec8 = optionparser.accepts("proxyPass").withRequiredArg();
-		OptionSpec<String> optionspec9 = optionparser.accepts("username").withRequiredArg().defaultsTo(baseClient.getDefaultUsername());
+		OptionSpec<String> optionspec9 = optionparser.accepts("username").withRequiredArg().defaultsTo(syrup.getDefaultUsername());
 		OptionSpec<String> optionspec10 = optionparser.accepts("uuid").withRequiredArg();
 		OptionSpec<String> optionspec11 = optionparser.accepts("accessToken").withRequiredArg().required();
 		OptionSpec<String> optionspec12 = optionparser.accepts("version").withRequiredArg().required();

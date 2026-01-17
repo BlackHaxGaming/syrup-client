@@ -8,9 +8,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import me.wavelength.baseclient.BaseClient;
-import me.wavelength.baseclient.event.events.ServerConnectingEvent;
-import me.wavelength.baseclient.event.events.ServerJoinEvent;
+import us.syrup.Syrup;
+import us.syrup.event.events.ServerConnectingEvent;
+import us.syrup.event.events.ServerJoinEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiDisconnected;
@@ -59,7 +59,7 @@ public class GuiConnecting extends GuiScreen {
 					}
 
 					/** Handle the ServerConnectingEvent - Start */
-					ServerConnectingEvent event = ((ServerConnectingEvent) BaseClient.instance.getEventManager().call(new ServerConnectingEvent(ip, port)));
+					ServerConnectingEvent event = ((ServerConnectingEvent) Syrup.instance.getEventManager().call(new ServerConnectingEvent(ip, port)));
 
 					cancel = event.isCancelled();
 
@@ -79,7 +79,7 @@ public class GuiConnecting extends GuiScreen {
 					/** Handle the ServerJoinEvent - Start */
 					new Thread(() -> {
 						while (mc.currentScreen == null && mc.theWorld == null && mc.thePlayer == null && mc.getCurrentServerData() == null)
-							synchronized (BaseClient.instance.getEventManager()) {
+							synchronized (Syrup.instance.getEventManager()) {
 								if (cancel)
 									return;
 							}
@@ -87,7 +87,7 @@ public class GuiConnecting extends GuiScreen {
 						if (!mc.getCurrentServerData().isConnected())
 							return;
 
-						BaseClient.instance.getEventManager().call(new ServerJoinEvent(mc.getCurrentServerData()));
+						Syrup.instance.getEventManager().call(new ServerJoinEvent(mc.getCurrentServerData()));
 					}).start();
 					/** Handle the ServerJoinEvent - End */
 				} catch (UnknownHostException unknownhostexception) {

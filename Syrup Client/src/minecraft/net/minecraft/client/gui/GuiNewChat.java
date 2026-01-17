@@ -8,9 +8,9 @@ import org.apache.logging.log4j.Logger;
 
 import com.google.common.collect.Lists;
 
-import me.wavelength.baseclient.BaseClient;
-import me.wavelength.baseclient.event.events.MessageReceivedEvent;
-import me.wavelength.baseclient.utils.Strings;
+import us.syrup.Syrup;
+import us.syrup.event.events.MessageReceivedEvent;
+import us.syrup.utils.Strings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
@@ -141,7 +141,7 @@ public class GuiNewChat extends Gui {
 		/** Handles the MessageReceivedEvent */
 		String message = (chatComponent == null ? "" : chatComponent.getUnformattedText());
 		if (fromMinecraft) {
-			MessageReceivedEvent event = (MessageReceivedEvent) BaseClient.instance.getEventManager().call(new MessageReceivedEvent(message, fromMinecraft));
+			MessageReceivedEvent event = (MessageReceivedEvent) Syrup.instance.getEventManager().call(new MessageReceivedEvent(message, fromMinecraft));
 
 			if (event.isCancelled())
 				return;

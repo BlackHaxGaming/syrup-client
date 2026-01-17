@@ -28,9 +28,7 @@ import org.newdawn.slick.opengl.renderer.Renderer;
 import org.newdawn.slick.opengl.renderer.SGL;
 import org.newdawn.slick.util.ResourceLoader;
 
-import me.wavelength.baseclient.utils.Colors;
-import me.wavelength.baseclient.utils.Strings;
-import net.minecraft.client.renderer.GlStateManager;
+import us.syrup.utils.Colors;
 
 /**
  * A Slick bitmap font that can display unicode glyphs from a TrueTypeFont.

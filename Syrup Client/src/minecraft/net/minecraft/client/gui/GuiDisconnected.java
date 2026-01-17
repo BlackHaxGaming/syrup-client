@@ -6,15 +6,15 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
-import me.wavelength.baseclient.BaseClient;
-import me.wavelength.baseclient.account.Account;
-import me.wavelength.baseclient.event.events.ServerLeaveEvent;
-import me.wavelength.baseclient.gui.altmanager.GuiAltManager;
-import me.wavelength.baseclient.gui.altmanager.impl.GuiAlteningLogin;
-import me.wavelength.baseclient.gui.altmanager.thread.AccountLoginThread;
-import me.wavelength.baseclient.thealtening.AlteningAlt;
-import me.wavelength.baseclient.thealtening.TheAltening;
-import me.wavelength.baseclient.utils.Strings;
+import us.syrup.Syrup;
+import us.syrup.account.Account;
+import us.syrup.event.events.ServerLeaveEvent;
+import us.syrup.gui.altmanager.GuiAltManager;
+import us.syrup.gui.altmanager.impl.GuiAlteningLogin;
+import us.syrup.gui.altmanager.thread.AccountLoginThread;
+import us.syrup.thealtening.AlteningAlt;
+import us.syrup.thealtening.TheAltening;
+import us.syrup.utils.Strings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.GuiConnecting;
 import net.minecraft.client.multiplayer.ServerData;
@@ -43,7 +43,7 @@ public class GuiDisconnected extends GuiScreen {
 		this.serverData = Minecraft.getMinecraft().getCurrentServerData();
 		serverData.setConnected(false);
 		
-		BaseClient.instance.getEventManager().call(new ServerLeaveEvent(serverData, reason, message));
+		Syrup.instance.getEventManager().call(new ServerLeaveEvent(serverData, reason, message));
 	}
 
 	public GuiDisconnected(GuiScreen screen, String reasonLocalizationKey, IChatComponent chatComp,  boolean minecraft) {
@@ -55,7 +55,7 @@ public class GuiDisconnected extends GuiScreen {
 		serverData.setConnected(false);
 
 		if (minecraft)
-			BaseClient.instance.getEventManager().call(new ServerLeaveEvent(serverData, reason, message));
+			Syrup.instance.getEventManager().call(new ServerLeaveEvent(serverData, reason, message));
 	}
 
 	/**
@@ -117,15 +117,15 @@ public class GuiDisconnected extends GuiScreen {
 			}
 			if (GuiAltManager.INSTANCE.loginThread != null)
 				GuiAltManager.INSTANCE.loginThread = null;
-			BaseClient.instance.getAccountManager().getAccounts().remove(GuiAltManager.INSTANCE.currentAccount);
-			BaseClient.instance.getAccountManager().save();
-			BaseClient.instance.getAccountManager().setLastAlt(null);
+			Syrup.instance.getAccountManager().getAccounts().remove(GuiAltManager.INSTANCE.currentAccount);
+			Syrup.instance.getAccountManager().save();
+			Syrup.instance.getAccountManager().setLastAlt(null);
 			GuiAltManager.INSTANCE.currentAccount = null;
 
 			status = "&eThe alt has been removed succesfully.";
 		}
 		if (button.id == 5 || button.id == 6) {
-			ArrayList<Account> registry = (button.id == 5 ? BaseClient.instance.getAccountManager().getNotBannedAccounts() : BaseClient.instance.getAccountManager().getAccounts());
+			ArrayList<Account> registry = (button.id == 5 ? Syrup.instance.getAccountManager().getNotBannedAccounts() : Syrup.instance.getAccountManager().getAccounts());
 			Random random = new Random();
 			if (registry.size() == 0) {
 				status = "&cYou don't have any account eligible for this.";
@@ -140,27 +140,27 @@ public class GuiDisconnected extends GuiScreen {
 			GuiAltManager.INSTANCE.currentAccount = randomAlt;
 			try {
 				(GuiAltManager.INSTANCE.loginThread = new AccountLoginThread(user2, pass2)).start();
-				BaseClient.instance.getAccountManager().save();
+				Syrup.instance.getAccountManager().save();
 				if (serverData != null)
 					this.mc.displayGuiScreen((GuiScreen) new GuiConnecting(new GuiMainMenu(), this.mc, serverData));
 			} catch (Exception exception) {
 			}
 		}
 		if (button.id == 7) {
-			if (BaseClient.instance.getAccountManager().getAlteningKey() == null) {
+			if (Syrup.instance.getAccountManager().getAlteningKey() == null) {
 				status = "&cNo TheAltening key...";
 				return;
 			}
 			useTheAltening = true;
 			try {
-				TheAltening theAltening = new TheAltening(BaseClient.instance.getAccountManager().getAlteningKey());
+				TheAltening theAltening = new TheAltening(Syrup.instance.getAccountManager().getAlteningKey());
 				AlteningAlt account = theAltening.generateAccount(theAltening.getUser());
 				if (!((AlteningAlt) Objects.<AlteningAlt>requireNonNull(account)).getToken().isEmpty()) {
-					BaseClient.instance.getAccountManager().setAlteningKey(BaseClient.instance.getAccountManager().getAlteningKey());
-					BaseClient.instance.getAccountManager().setLastAlteningAlt(((AlteningAlt) Objects.<AlteningAlt>requireNonNull(account)).getToken());
+					Syrup.instance.getAccountManager().setAlteningKey(Syrup.instance.getAccountManager().getAlteningKey());
+					Syrup.instance.getAccountManager().setLastAlteningAlt(((AlteningAlt) Objects.<AlteningAlt>requireNonNull(account)).getToken());
 					GuiAlteningLogin.thread = new AccountLoginThread(((AlteningAlt) Objects.<AlteningAlt>requireNonNull(account)).getToken().replaceAll(" ", ""), "nig");
 					GuiAlteningLogin.thread.start();
-					BaseClient.instance.getAccountManager().save();
+					Syrup.instance.getAccountManager().save();
 				}
 				if (serverData != null)
 					this.mc.displayGuiScreen((GuiScreen) new GuiConnecting(new GuiMainMenu(), this.mc, serverData));

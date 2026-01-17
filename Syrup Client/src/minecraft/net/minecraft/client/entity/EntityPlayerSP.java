@@ -1,11 +1,11 @@
 package net.minecraft.client.entity;
 
-import me.wavelength.baseclient.BaseClient;
-import me.wavelength.baseclient.event.events.MessageSentEvent;
-import me.wavelength.baseclient.event.events.PostMotionEvent;
-import me.wavelength.baseclient.event.events.PreMotionEvent;
-import me.wavelength.baseclient.event.events.SlowDownEvent;
-import me.wavelength.baseclient.event.events.UpdateEvent;
+import us.syrup.Syrup;
+import us.syrup.event.events.MessageSentEvent;
+import us.syrup.event.events.PostMotionEvent;
+import us.syrup.event.events.PreMotionEvent;
+import us.syrup.event.events.SlowDownEvent;
+import us.syrup.event.events.UpdateEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.MovingSoundMinecartRiding;
 import net.minecraft.client.audio.PositionedSoundRecord;
@@ -173,7 +173,7 @@ public class EntityPlayerSP extends AbstractClientPlayer {
 	 */
 	public void onUpdate() {
 		if (this.worldObj.isBlockLoaded(new BlockPos(this.posX, 0.0D, this.posZ))) {
-			BaseClient.instance.getEventManager().call(new UpdateEvent());
+			Syrup.instance.getEventManager().call(new UpdateEvent());
 
 			super.onUpdate();
 
@@ -181,11 +181,11 @@ public class EntityPlayerSP extends AbstractClientPlayer {
 				this.sendQueue.addToSendQueue(new C03PacketPlayer.C05PacketPlayerLook(this.rotationYaw, this.rotationPitch, this.onGround));
 				this.sendQueue.addToSendQueue(new C0CPacketInput(this.moveStrafing, this.moveForward, this.movementInput.jump, this.movementInput.sneak));
 			} else {
-				BaseClient.instance.getEventManager().call(new PreMotionEvent(this.posX, this.posY, this.posZ, this.rotationYaw, this.rotationPitch, this.onGround));
+				Syrup.instance.getEventManager().call(new PreMotionEvent(this.posX, this.posY, this.posZ, this.rotationYaw, this.rotationPitch, this.onGround));
 
 				this.onUpdateWalkingPlayer();
 
-				BaseClient.instance.getEventManager().call(new PostMotionEvent());
+				Syrup.instance.getEventManager().call(new PostMotionEvent());
 			}
 		}
 	}
@@ -277,7 +277,7 @@ public class EntityPlayerSP extends AbstractClientPlayer {
 	 * Sends a chat message from the player. Args: chatMessage
 	 */
 	public void sendChatMessage(String message) {
-		MessageSentEvent messageSentEvent = (MessageSentEvent) BaseClient.instance.getEventManager().call(new MessageSentEvent(message));
+		MessageSentEvent messageSentEvent = (MessageSentEvent) Syrup.instance.getEventManager().call(new MessageSentEvent(message));
 		if (messageSentEvent.isCancelled())
 			return;
 
@@ -673,7 +673,7 @@ public class EntityPlayerSP extends AbstractClientPlayer {
 		this.movementInput.updatePlayerMoveState();
 
 		if (this.isUsingItem() && !this.isRiding()) {
-			SlowDownEvent event = (SlowDownEvent) BaseClient.instance.getEventManager().call(new SlowDownEvent(0.2F));
+			SlowDownEvent event = (SlowDownEvent) Syrup.instance.getEventManager().call(new SlowDownEvent(0.2F));
 			if (!(event.isCancelled())) {
 				this.movementInput.moveStrafe *= event.getSlowDownMultiplier();
 				this.movementInput.moveForward *= event.getSlowDownMultiplier();
