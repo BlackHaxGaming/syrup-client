@@ -9,7 +9,7 @@ import us.syrup.module.Module;
 public class TestModule extends Module {
 
 	public TestModule() {
-		super("TestModule", "This is a test module...", 0, Category.MOVEMENT, AntiCheat.AAC);
+		super("TestModule", "This is a test module...", 0, Category.MOVEMENT, AntiCheat.AAC, AntiCheat.VERUS);
 	}
 
 	@Override

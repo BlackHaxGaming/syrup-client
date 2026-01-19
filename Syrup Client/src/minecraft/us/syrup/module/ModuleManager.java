@@ -40,7 +40,7 @@ public class ModuleManager extends EventListener {
 		registerModule(new TestModule());
 		registerModule(new XRay());
 		registerModule(new NameProtect());
-		registerModule(new AdvancedTabGui());
+		//registerModule(new AdvancedTabGui());
 		registerModule(new TabGui());
 		registerModule(new ClickGui());
 		registerModule(new Sprint());

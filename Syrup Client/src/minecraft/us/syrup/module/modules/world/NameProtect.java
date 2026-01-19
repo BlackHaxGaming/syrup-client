@@ -60,7 +60,7 @@ public class NameProtect extends Module {
 	public String getNewName(String name) {
 		String newName = null;
 		if (!(names.containsKey(name))) {
-			names.put(name, Strings.randomString(10, true, false, false) + (name.equals(mc.thePlayer.getName()) ? " (YOU)" : ""));
+			names.put(name, Strings.randomString(10, true, false, false) + (name.equals(mc.thePlayer.getName()) ? " (DU)" : ""));
 		}
 
 		newName = names.get(name);

@@ -13,7 +13,6 @@ public class Sprint extends Module {
             super("Sprint", "Sprints for the User", Keyboard.KEY_NONE, Category.MOVEMENT, AntiCheat.VANILLA, AntiCheat.VANILLA);
     }
 
-
     //Check if MC Player is there and if the Current screen is not NULL
     //Also added Boolean which Checks the Movement Input so the Player does not Try Sprinting while Standing so it Does not Flag anticheat
     @Override

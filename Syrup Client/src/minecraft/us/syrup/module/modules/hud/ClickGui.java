@@ -9,7 +9,7 @@ import us.syrup.module.Module;
 public class ClickGui extends Module {
 
 	public ClickGui() {
-		super("ClickGui", "This is the ClickGui", Keyboard.KEY_RSHIFT, Category.HUD, false);
+		super("ClickGui", "This is the ClickGui", Keyboard.KEY_RSHIFT, Category.HIDDEN, false);
 	}
 
 	@Override
