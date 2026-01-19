@@ -20,26 +20,21 @@ import net.minecraft.client.Minecraft;
 /**
  * Purple toggled-modules overlay.
  *
- * Fixes:
- * - Accent bar stops per-entry (no long bar through the whole list)
- * - Background/box slides in together with the text (right -> left)
- * - No overlap artifacts (dynamic height/spacing)
- *
- * Notes:
- * - Uses CFR text width helpers (Strings.getStringWidthCFR + RenderUtils.drawString)
- * - Keeps it clean: no text shadow offsets
+ * Fixes (v2):
+ * - ✅ No vertical overlap between active entries (active entries SNAP to slots)
+ * - ✅ Fast re-stack (list closes immediately)
+ * - ✅ Leaving entry still slides out (left -> right) but SLOWER
+ * - Keeps: per-entry stripe, no gaps, box+text slide together
  */
 public class ToggledModules1 extends EventListener {
 
 	// ---- layout ----
-	// Make the list flush to the right edge (no visible gap)
 	private static final int MARGIN_RIGHT = 0;
 	private static final int MARGIN_TOP = 4;
 
 	private static final int PAD_X = 6;
 	private static final int PAD_Y = 3;
 
-	// Left accent stripe (inside the plate)
 	private static final int STRIPE_W = 2;
 	private static final int STRIPE_GAP = 5;
 
@@ -53,11 +48,10 @@ public class ToggledModules1 extends EventListener {
 	private static final int PURPLE_C = new Color(196, 150, 255).getRGB();
 
 	// ---- animation ----
-	private static final float SLIDE_SPEED = 10.0f;   // higher = faster
-	private static final float FADE_SPEED = 12.0f;
-
-	// Keep the list perfectly stacked (no gaps / no overlaps), even when order changes.
-	// Horizontal slide/fade stays fully animated.
+	private static final float SLIDE_IN_SPEED = 4.5f;
+	private static final float SLIDE_OUT_SPEED = 1.6f;
+	private static final float FADE_IN_SPEED = 6.0f;
+	private static final float FADE_OUT_SPEED = 2.1f;
 
 	private final Map<Module, EntryAnim> anims = new HashMap<Module, EntryAnim>();
 	private long lastFrameNs = System.nanoTime();
@@ -73,7 +67,7 @@ public class ToggledModules1 extends EventListener {
 		float dt = (now - lastFrameNs) / 1_000_000_000.0f;
 		lastFrameNs = now;
 		if (dt < 0f) dt = 0f;
-		if (dt > 0.05f) dt = 0.05f;
+		if (dt > 0.033f) dt = 0.033f;
 
 		// ---- collect + filter ----
 		List<Module> raw = Syrup.instance.getModuleManager().getToggledModules();
@@ -98,10 +92,11 @@ public class ToggledModules1 extends EventListener {
 
 		// ---- sizes ----
 		int fontH = Syrup.instance.getFontRenderer().getFontSize() / 2;
-		int lineH = fontH + 2;                // visual line height for text baseline
-		int plateH = lineH + (PAD_Y * 2);     // full background height per entry
+		int lineH = fontH + 2;
+		int plateH = lineH + (PAD_Y * 2);
 
 		// ---- assign targets / create anims ----
+		// Only active modules reserve slots -> list closes immediately
 		int yCursor = MARGIN_TOP;
 		for (int i = 0; i < modules.size(); i++) {
 			Module m = modules.get(i);
@@ -119,7 +114,10 @@ public class ToggledModules1 extends EventListener {
 			a.targetY = yCursor;
 			a.display = getDisplayParts(m);
 
-			yCursor += plateH; // no gap between entries
+			// ✅ SNAP actives to slots (no overlap artifacts)
+			a.y = a.targetY;
+
+			yCursor += plateH;
 		}
 
 		// ---- animate ----
@@ -128,40 +126,32 @@ public class ToggledModules1 extends EventListener {
 			EntryAnim a = e.getValue();
 
 			float target = a.present ? 1.0f : 0.0f;
-			a.anim = approachExp(a.anim, target, SLIDE_SPEED, dt);
-			a.alpha = approachExp(a.alpha, target, FADE_SPEED, dt);
+			float slideSpeed = a.present ? SLIDE_IN_SPEED : SLIDE_OUT_SPEED;
+			float fadeSpeed = a.present ? FADE_IN_SPEED : FADE_OUT_SPEED;
 
-			if (a.present) {
-				// Snap to the computed slot to avoid overlap/gap artifacts when items reorder
-				a.y = a.targetY;
-			}
+			a.anim = approachExp(a.anim, target, slideSpeed, dt);
+			a.alpha = approachExp(a.alpha, target, fadeSpeed, dt);
 
+			// Leaving entries keep their last y while sliding out
 			if (!a.present && a.alpha < 0.02f && a.anim < 0.02f) {
 				toRemove.add(e.getKey());
 			}
 		}
 		for (int i = 0; i < toRemove.size(); i++) anims.remove(toRemove.get(i));
 
-		// shimmer time
 		float t = (System.currentTimeMillis() % 1_000_000L) / 1000.0f;
 
-		// ---- render entries ----
-
-		// Clip everything to the screen so slide-in can start off-screen without artifacts
+		// ---- render ----
 		Minecraft mc = Minecraft.getMinecraft();
 		GL11.glEnable(GL11.GL_SCISSOR_TEST);
 		GL11.glScissor(0, 0, mc.displayWidth, mc.displayHeight);
 
-		// Render BOTH present entries and today's "leaving" entries.
-		// This enables the slide-out animation when a module gets untoggled.
-		// We render leaving entries first so present ones stay visually on top.
+		// Leaving first, present last (present stays on top -> no visual overlap while restacking)
 		List<Map.Entry<Module, EntryAnim>> renderEntries = new ArrayList<Map.Entry<Module, EntryAnim>>(anims.entrySet());
 		renderEntries.sort((e1, e2) -> {
 			EntryAnim a1 = e1.getValue();
 			EntryAnim a2 = e2.getValue();
-			// leaving first
 			if (a1.present != a2.present) return a1.present ? 1 : -1;
-			// then by y
 			return Float.compare(a1.y, a2.y);
 		});
 
@@ -173,14 +163,11 @@ public class ToggledModules1 extends EventListener {
 			int alpha = (int) (255.0f * clamp01(a.alpha));
 			if (alpha <= 3) continue;
 
-			// entering/idle: right -> left
-			// leaving:        left -> right
 			float eased;
 			if (a.present) {
-				eased = easeOutCubic(a.anim);
+				eased = easeOutCubic(a.anim);          // 0..1
 			} else {
-				// use a separate easing so the slide-out starts noticeably (prevents long overlap)
-				eased = easeOutCubic(1.0f - a.anim);
+				eased = easeOutCubic(1.0f - a.anim);   // 0..1 while leaving
 			}
 
 			String name = a.display != null ? a.display.name : Strings.capitalizeFirstLetter(m.getName());
@@ -193,45 +180,34 @@ public class ToggledModules1 extends EventListener {
 			int plateW = PAD_X + STRIPE_W + STRIPE_GAP + textW + PAD_X;
 
 			// slide background + text together
-			// Slightly overshoot the right edge so there's never a 1px "gap" from drawRect rounding.
-			// Scissor test will clip anything outside the screen.
 			int targetRight = event.getWidth() - MARGIN_RIGHT + 2;
 			float slideDist = plateW + 40.0f;
 
 			int right;
 			if (a.present) {
-				// right -> left
-				right = (int) (targetRight + (1.0f - eased) * slideDist);
+				right = (int) (targetRight + (1.0f - eased) * slideDist); // right->left
 			} else {
-				// left -> right
-				right = (int) (targetRight + eased * slideDist);
+				right = (int) (targetRight + eased * slideDist);          // left->right
 			}
 			int left = right - plateW;
-
-			// no manual clamp: scissor test clips to screen bounds
 
 			int y = (int) a.y;
 			int y1 = y - PAD_Y;
 			int y2 = y + lineH + PAD_Y;
 
-			// background plate
 			int plateA = (PLATE_COLOR >>> 24) & 0xFF;
 			int plateCol = withAlpha(PLATE_COLOR, (int) (plateA * (alpha / 255.0f)));
 			RenderUtils.drawRect(left, y1, right, y2, plateCol);
 
-			// per-entry accent stripe (stops exactly at this entry height)
 			int stripeX1 = left + PAD_X;
 			int stripeX2 = stripeX1 + STRIPE_W;
 			int stripeCol = withAlpha(STRIPE_COLOR, (int) (alpha * 0.9f));
 			RenderUtils.drawRect(stripeX1, y1 + 1, stripeX2, y2 - 1, stripeCol);
 
-			// text position
 			int textX = stripeX2 + STRIPE_GAP;
 
-			// name shimmer
 			drawGradientShimmerText(name, textX, y, alpha, t);
 
-			// suffix (same palette, no dark pill, no shadow)
 			if (suffix.length() > 0) {
 				int sx = textX + nameW;
 				int base = lerpColor(PURPLE_C, PURPLE_A, 0.35f);
@@ -268,7 +244,7 @@ public class ToggledModules1 extends EventListener {
 		}
 	}
 
-	// ---- text shimmer (no shadow offsets) ----
+	// ---- shimmer ----
 
 	private static void drawGradientShimmerText(String text, int x, int y, int alpha, float timeSec) {
 		int cx = x;

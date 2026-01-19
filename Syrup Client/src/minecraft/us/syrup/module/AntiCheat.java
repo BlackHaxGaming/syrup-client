@@ -2,7 +2,7 @@ package us.syrup.module;
 
 public enum AntiCheat {
 
-	VANILLA(false), NCP(true), SPARTAN(false), VERUS(false), AAC(true), HYPIXEL(false);
+	VANILLA(false), NCP(true), SPARTAN(false), VERUS(false), AAC(true), HYPIXEL(false), MINEBERRY(false);
 
 	private boolean capital;
 

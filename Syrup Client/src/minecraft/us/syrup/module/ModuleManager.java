@@ -9,6 +9,7 @@ import us.syrup.event.events.KeyPressedEvent;
 import us.syrup.event.events.MouseClickEvent;
 import us.syrup.module.modules.combat.Friends;
 import us.syrup.module.modules.movement.Fly;
+import us.syrup.module.modules.movement.Speed;
 import us.syrup.module.modules.movement.Sprint;
 import us.syrup.module.modules.movement.TestModule;
 import us.syrup.module.modules.render.XRay;
@@ -44,6 +45,7 @@ public class ModuleManager extends EventListener {
 		registerModule(new TabGui());
 		registerModule(new ClickGui());
 		registerModule(new Sprint());
+		registerModule(new Speed());
 	}
 
 	public Module getModule(Class<? extends Module> clasz) {
