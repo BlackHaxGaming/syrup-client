@@ -18,7 +18,8 @@ public class Fly extends Module {
 
 	@Override
 	public void setup() {
-		moduleSettings.addDefault("speed", 1.0D);
+		moduleSettings.addDefault("speed", 6.0D, 0.5D, 10.0D, 0.1D);
+		moduleSettings.addDefault("TestBoolean", false);
 	}
 
 	@Override
@@ -33,13 +34,14 @@ public class Fly extends Module {
 	public void onDisable() {
 		mc.thePlayer.capabilities.allowFlying = allowFlying;
 		mc.thePlayer.capabilities.isFlying = isFlying;
+		mc.timer.timerSpeed = 1.0F;
 	}
 
 	@Override
 	public void onUpdate(UpdateEvent event) {
 		double speed = moduleSettings.getDouble("speed");
 
-		speed = speed * 2;
+		mc.timer.timerSpeed = (float) speed;
 
 		mc.thePlayer.capabilities.isFlying = true;
 	}

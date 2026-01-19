@@ -15,7 +15,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import us.syrup.gui.clickgui.components.Dropdown;
 import us.syrup.gui.clickgui.components.ModuleButton;
-import us.syrup.gui.clickgui.components.ModuleSettings;
+import us.syrup.gui.clickgui.components.ModuleSettingsParent;
 import us.syrup.module.Category;
 import us.syrup.module.Module;
 import us.syrup.utils.RenderUtils;
@@ -26,7 +26,7 @@ import us.syrup.utils.Strings;
  * - Smoother global fade
  * - Dropdown open/close uses eased scissor clip
  * - Hover anim a bit snappier
- * - Popup: delegated to ModuleSettings (fade/slide/scale). ClickGui clears it reliably.
+ * - Popup: delegated to ModuleSettingsParent (fade/slide/scale). ClickGui clears it reliably.
  */
 public class ClickGui extends GuiScreen {
 
@@ -45,7 +45,7 @@ public class ClickGui extends GuiScreen {
 	private List<Dropdown> dropdowns;
 
 	// popup
-	private ModuleSettings popup;
+	private ModuleSettingsParent popup;
 
 	// anim state
 	private final IdentityHashMap<Dropdown, Float> extendAnim = new IdentityHashMap<Dropdown, Float>();
@@ -167,7 +167,7 @@ public class ClickGui extends GuiScreen {
 	// --- Popup positioning: always next to dropdown right edge ---
 
 	public void openPopupNextToDropdown(Module module, Dropdown dropdown, int anchorY) {
-		ModuleSettings p = new ModuleSettings(this, module, 0, 0);
+		ModuleSettingsParent p = new ModuleSettingsParent(this, module, 0, 0);
 
 		int popupW = p.getWidth();
 		int popupH = p.getHeight();
@@ -195,7 +195,7 @@ public class ClickGui extends GuiScreen {
 
 	// Backwards compatible overloads
 	public void openPopup(Module module, int anchorX, int anchorY, int anchorW, int anchorH) {
-		ModuleSettings p = new ModuleSettings(this, module, 0, 0);
+		ModuleSettingsParent p = new ModuleSettingsParent(this, module, 0, 0);
 		int popupW = p.getWidth();
 		int popupH = p.getHeight();
 
